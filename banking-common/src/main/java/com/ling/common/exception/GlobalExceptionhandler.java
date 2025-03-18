@@ -22,7 +22,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @RestControllerAdvice
-public class UnifiedExceptionhandler {
+public class GlobalExceptionhandler {
 
     @ExceptionHandler(value = Exception.class)
     public R handleException(Exception e){
