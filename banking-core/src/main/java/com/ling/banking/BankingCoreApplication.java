@@ -15,7 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan({"com.ling.banking.core"})
+@ComponentScan({"com.ling.banking"})
 public class BankingCoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(BankingCoreApplication.class, args);
