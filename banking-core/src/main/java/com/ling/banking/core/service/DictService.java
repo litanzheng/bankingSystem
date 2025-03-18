@@ -2,6 +2,10 @@ package com.ling.banking.core.service;
 
 import com.ling.banking.core.pojo.entity.Dict;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface DictService extends IService<Dict> {
 
+    @Transactional
+    void importData(InputStream inputStream);
+
+    List<Dict> listByParentId(Long parentId);
+
+    List listDictData();
 }

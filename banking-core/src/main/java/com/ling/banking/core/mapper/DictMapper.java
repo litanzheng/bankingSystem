@@ -1,7 +1,10 @@
 package com.ling.banking.core.mapper;
 
+import com.ling.banking.core.pojo.dto.ExcelDictDTO;
 import com.ling.banking.core.pojo.entity.Dict;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface DictMapper extends BaseMapper<Dict> {
 
+
+    void insertBatch(List<ExcelDictDTO> list);
 }
