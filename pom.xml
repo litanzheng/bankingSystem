@@ -7,6 +7,8 @@
         <module>banking-common</module>
         <module>banking-base</module>
         <module>banking-core</module>
+        <module>banking-sms</module>
+        <module>banking-oss</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
