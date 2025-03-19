@@ -1,7 +1,10 @@
 package com.ling.banking.core.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.ling.banking.core.listener.ExcelDictDTOListener;
 import com.ling.banking.core.pojo.dto.ExcelDictDTO;
 import com.ling.banking.core.pojo.entity.Dict;
@@ -36,6 +39,13 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Resource
     private RedisTemplate redisTemplate;
 
+    private  final Cache<String, List<Dict>> dictMap  = Caffeine.newBuilder()
+            .initialCapacity(100)
+            .expireAfterAccess(5L, TimeUnit.MINUTES)
+            .build();
+
+
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void importData(InputStream inputStream) {
@@ -45,9 +55,14 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
 
     @Override
     public List<Dict> listByParentId(Long parentId) {
+        List<Dict> dictList = dictMap.getIfPresent(String.valueOf(parentId));
+        if(CollUtil.isNotEmpty(dictList)){
+            log.info("从caffeine中获取数据列表");
+            return dictList;
+        }
         try {
             //首先查询redis中是否存在数据列表
-            List<Dict> dictList = (List<Dict>)redisTemplate.opsForValue().get("banking:core:dictList:" + parentId);
+            dictList = (List<Dict>)redisTemplate.opsForValue().get("banking:core:dictList:" + parentId);
             if(dictList != null){
                 //如果存在则从redis中直接返回数据列表
                 log.info("从redis中获取数据列表");
@@ -61,7 +76,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         log.info("从数据库中获取数据列表");
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.eq("parent_id", parentId);
-        List<Dict> dictList = baseMapper.selectList(dictQueryWrapper);
+        dictList = baseMapper.selectList(dictQueryWrapper);
         //填充hashChildren字段
         dictList.forEach(dict -> {
             //判断当前节点是否有子节点，找到当前的dict下级有没有子节点
@@ -69,7 +84,8 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             dict.setHasChildren(hasChildren);
         });
         try {
-            //将数据存入redis
+            //将数据存入 caffine redis
+            dictMap.put(String.valueOf(parentId), dictList);
             log.info("将数据存入redis");
             redisTemplate.opsForValue().set("banking:core:dictList:" + parentId, dictList, 5, TimeUnit.MINUTES);
         } catch (Exception e) {
