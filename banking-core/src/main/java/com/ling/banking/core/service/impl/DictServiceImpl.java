@@ -47,7 +47,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     public List<Dict> listByParentId(Long parentId) {
         try {
             //首先查询redis中是否存在数据列表
-            List<Dict> dictList = (List<Dict>)redisTemplate.opsForValue().get("srb:core:dictList:" + parentId);
+            List<Dict> dictList = (List<Dict>)redisTemplate.opsForValue().get("banking:core:dictList:" + parentId);
             if(dictList != null){
                 //如果存在则从redis中直接返回数据列表
                 log.info("从redis中获取数据列表");
@@ -68,11 +68,10 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
             boolean hasChildren = this.hasChildren(dict.getId());
             dict.setHasChildren(hasChildren);
         });
-
         try {
             //将数据存入redis
             log.info("将数据存入redis");
-            redisTemplate.opsForValue().set("srb:core:dictList:" + parentId, dictList, 5, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set("banking:core:dictList:" + parentId, dictList, 5, TimeUnit.MINUTES);
         } catch (Exception e) {
             log.error("redis服务器异常:" + ExceptionUtils.getStackTrace(e));
         }

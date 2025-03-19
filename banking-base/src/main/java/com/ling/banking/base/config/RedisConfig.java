@@ -19,7 +19,7 @@ public class RedisConfig {
 
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 
-        //设置连接池工厂
+        //设置连接池工厂 提升连接效率
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
         //首先解决key的序列化方式
@@ -28,18 +28,15 @@ public class RedisConfig {
 
         //解决value的序列化方式
         Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        //将当前对象的数据类型也存入序列化的结果字符串中
-        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
-
-        // 解决jackson2无法反序列化LocalDateTime的问题
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        objectMapper.registerModule(new JavaTimeModule());
-        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
-
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);
 
+        // 解决jackson2无法反序列化LocalDateTime的问题
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        objectMapper.registerModule(new JavaTimeModule());
+        //将当前对象的数据类型也存入序列化的结果字符串中
+        objectMapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
+        jackson2JsonRedisSerializer.setObjectMapper(objectMapper);
         return redisTemplate;
     }
 }

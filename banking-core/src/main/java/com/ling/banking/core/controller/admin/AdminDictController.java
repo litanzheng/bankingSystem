@@ -59,7 +59,6 @@ public class AdminDictController {
     public void export(HttpServletResponse response) throws IOException {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + URLEncoder.encode("data.xlsx", "UTF-8"));
-
         // 这里URLEncoder.encode可以防止中文乱码
         String fileName = URLEncoder.encode("mydict", "UTF-8").replaceAll("\\+", "%20");
         EasyExcel.write(response.getOutputStream(), ExcelDictDTO.class).sheet("数据字典").doWrite(dictService.listDictData());
@@ -80,7 +79,6 @@ public class AdminDictController {
     public R listByParentId(
             @ApiParam(value = "上级节点id", required = true)
             @PathVariable Long parentId){
-
         List<Dict> dictList = dictService.listByParentId(parentId);
         return R.ok().data("list", dictList);
     }
