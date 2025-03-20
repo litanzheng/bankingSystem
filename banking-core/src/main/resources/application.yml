@@ -4,7 +4,7 @@ spring:
   profiles:
     active: dev # 环境设置
   application:
-    name: service-core # 服务名
+    name: banking-core # 服务名
   datasource: # mysql数据库连接
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

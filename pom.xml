@@ -9,6 +9,7 @@
         <module>banking-core</module>
         <module>banking-sms</module>
         <module>banking-oss</module>
+        <module>banking-gateway</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

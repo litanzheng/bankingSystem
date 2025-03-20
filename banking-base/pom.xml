@@ -67,11 +67,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
-        <!-- json解析 -->
-        <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-        </dependency>
         <!--服务发现-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
@@ -82,6 +77,11 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+        </dependency>
+        <!-- json解析 -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
         </dependency>
 
     </dependencies>
