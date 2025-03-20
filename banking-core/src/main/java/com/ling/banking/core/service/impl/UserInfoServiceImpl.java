@@ -1,6 +1,9 @@
 package com.ling.banking.core.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ling.banking.base.util.JwtUtils;
 import com.ling.banking.core.mapper.UserAccountMapper;
 import com.ling.banking.core.mapper.UserLoginRecordMapper;
@@ -8,6 +11,7 @@ import com.ling.banking.core.pojo.entity.UserAccount;
 import com.ling.banking.core.pojo.entity.UserInfo;
 import com.ling.banking.core.mapper.UserInfoMapper;
 import com.ling.banking.core.pojo.entity.UserLoginRecord;
+import com.ling.banking.core.pojo.query.UserInfoQuery;
 import com.ling.banking.core.pojo.vo.LoginVO;
 import com.ling.banking.core.pojo.vo.RegisterVO;
 import com.ling.banking.core.pojo.vo.UserIndexVO;
@@ -15,8 +19,10 @@ import com.ling.banking.core.pojo.vo.UserInfoVO;
 import com.ling.banking.core.service.UserInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ling.common.exception.Assert;
+import com.ling.common.exception.BusinessException;
 import com.ling.common.result.ResponseEnum;
 import com.ling.common.util.MD5;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -67,6 +73,9 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     public UserInfoVO login(LoginVO loginVO, String ip) {
         String mobile = loginVO.getMobile();
         String password = loginVO.getPassword();
+        if (!StrUtil.isAllNotEmpty(mobile, password)) {
+            throw new BusinessException("手机号或密码不能为空");
+        }
         Integer userType = loginVO.getUserType();
         //用户是否存在
         QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
@@ -132,5 +141,37 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfoQueryWrapper.eq("mobile", mobile);
         Integer count = baseMapper.selectCount(userInfoQueryWrapper);
         return count > 0;
+    }
+
+    @Override
+    public IPage<UserInfo> listPage(Page<UserInfo> pageParam, UserInfoQuery userInfoQuery) {
+        if(userInfoQuery == null){
+            return baseMapper.selectPage(pageParam, null);
+        }
+        //查询条件
+        String mobile = userInfoQuery.getMobile();
+        Integer status = userInfoQuery.getStatus();
+        Integer userType = userInfoQuery.getUserType();
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        userInfoQueryWrapper
+                .eq(StringUtils.isNotBlank(mobile), "mobile", mobile)
+                .eq(status != null, "status", status)
+                .eq(userType != null, "user_type", userType);
+        return baseMapper.selectPage(pageParam, userInfoQueryWrapper);
+    }
+
+    @Override
+    public void lock(Long id, Integer status) {
+        if(id == null || status == null){
+            throw new BusinessException("参数错误");
+        }
+        UserInfo checkUserInfo = baseMapper.selectById(id);
+        if (checkUserInfo==null){
+          throw new BusinessException("用户不存在");
+        }
+        UserInfo userInfo = new UserInfo();
+        userInfo.setId(id);
+        userInfo.setStatus(status);
+        baseMapper.updateById(userInfo);
     }
 }
