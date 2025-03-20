@@ -4,8 +4,8 @@ import com.ling.banking.sms.client.CoreUserInfoClient;
 import com.ling.banking.sms.service.SmsService;
 import com.ling.banking.sms.util.SmsProperties;
 import com.ling.common.exception.Assert;
-import com.ling.common.result.R;
 import com.ling.common.result.ResponseEnum;
+import com.ling.common.result.Result;
 import com.ling.common.util.RandomUtils;
 import com.ling.common.util.RegexValidateUtils;
 import io.swagger.annotations.Api;
@@ -40,7 +40,7 @@ public class ApiSmsController {
 
     @ApiOperation("获取验证码")
     @GetMapping("/send/{mobile}")
-    public R send(
+    public Result send(
             @ApiParam(value = "手机号", required = true)
             @PathVariable String mobile){
 
@@ -62,6 +62,6 @@ public class ApiSmsController {
         //将验证码存入redis
         redisTemplate.opsForValue().set("banking:sms:code:" + mobile, code, 5, TimeUnit.MINUTES);
 
-        return R.ok().message("短信发送成功");
+        return Result.ok().message("短信发送成功");
     }
 }

@@ -3,8 +3,8 @@ package com.ling.banking.oss.controller.api;
 
 import com.ling.banking.oss.service.FileService;
 import com.ling.common.exception.BusinessException;
-import com.ling.common.result.R;
 import com.ling.common.result.ResponseEnum;
+import com.ling.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,7 +26,7 @@ public class FileController {
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
-    public R upload(
+    public Result upload(
             @ApiParam(value= "文件", required = true)
             @RequestParam("file") MultipartFile file,
 
@@ -38,7 +38,7 @@ public class FileController {
             String originalFilename = file.getOriginalFilename();
             String url = fileService.upload(inputStream, module, originalFilename);
 
-            return R.ok().message("文件上传成功").data("url", url);
+            return Result.ok().message("文件上传成功").data("url", url);
         } catch (IOException e) {
            throw new BusinessException(ResponseEnum.UPLOAD_ERROR, e);
         }
@@ -46,10 +46,10 @@ public class FileController {
 
     @ApiOperation("删除oss文件")
     @DeleteMapping("/remove")
-    public R remove(
+    public Result remove(
             @ApiParam(value = "要删除的文件", required = true)
             @RequestParam("url") String url){
         fileService.removeFile(url);
-        return R.ok().message("删除成功");
+        return Result.ok().message("删除成功");
     }
 }

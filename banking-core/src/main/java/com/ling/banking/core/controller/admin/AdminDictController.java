@@ -5,8 +5,8 @@ import com.ling.banking.core.pojo.dto.ExcelDictDTO;
 import com.ling.banking.core.pojo.entity.Dict;
 import com.ling.banking.core.service.DictService;
 import com.ling.common.exception.BusinessException;
-import com.ling.common.result.R;
 import com.ling.common.result.ResponseEnum;
+import com.ling.common.result.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,13 +43,13 @@ public class AdminDictController {
 
     @ApiOperation("Excel数据的批量导入")
     @PostMapping("/import")
-    public R batchImport(
+    public Result batchImport(
             @ApiParam(value = "Excel数据字典文件", required = true)
             @RequestParam("file") MultipartFile file){
         try {
             InputStream inputStream = file.getInputStream();
             dictService.importData(inputStream);
-            return R.ok().message("数据字典数据批量导入成功");
+            return Result.ok().message("数据字典数据批量导入成功");
         } catch (Exception e) {
             throw new BusinessException(ResponseEnum.UPLOAD_ERROR, e);
         }
@@ -76,11 +76,11 @@ public class AdminDictController {
   如果当前节点包含子数据，那么点击当前节点的时候，就需要通过load方法加载子数据*/
     @ApiOperation("根据上级id获取子节点数据列表")
     @GetMapping("/listByParentId/{parentId}")
-    public R listByParentId(
+    public Result listByParentId(
             @ApiParam(value = "上级节点id", required = true)
             @PathVariable Long parentId){
         List<Dict> dictList = dictService.listByParentId(parentId);
-        return R.ok().data("list", dictList);
+        return Result.ok().data("list", dictList);
     }
 
 }

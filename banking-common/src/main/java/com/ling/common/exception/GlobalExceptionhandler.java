@@ -1,7 +1,7 @@
 package com.ling.common.exception;
 
-import com.ling.common.result.R;
 import com.ling.common.result.ResponseEnum;
+import com.ling.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
@@ -25,17 +25,17 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class GlobalExceptionhandler {
 
     @ExceptionHandler(value = Exception.class)
-    public R handleException(Exception e){
+    public Result handleException(Exception e){
         log.error(e.getMessage(), e);
-        return R.error();
+        return Result.error();
     }
 
 
 
     @ExceptionHandler(value = BusinessException.class)
-    public R handleException(BusinessException e){
+    public Result handleException(BusinessException e){
         log.error(e.getMessage(), e);
-        return R.error().message(e.getMessage()).code(e.getCode());
+        return Result.error().message(e.getMessage()).code(e.getCode());
     }
 
     /**
@@ -57,9 +57,9 @@ public class GlobalExceptionhandler {
             MissingServletRequestPartException.class,
             AsyncRequestTimeoutException.class
     })
-    public R handleServletException(Exception e) {
+    public Result handleServletException(Exception e) {
         log.error(e.getMessage(), e);
         //SERVLET_ERROR(-102, "servlet请求异常"),
-        return R.error().message(ResponseEnum.SERVLET_ERROR.getMessage()).code(ResponseEnum.SERVLET_ERROR.getCode());
+        return Result.error().message(ResponseEnum.SERVLET_ERROR.getMessage()).code(ResponseEnum.SERVLET_ERROR.getCode());
     }
 }
