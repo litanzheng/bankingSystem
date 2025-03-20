@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class R {
+public class Result {
 
     private Integer code;
     private String message;
@@ -15,14 +15,14 @@ public class R {
     /**
      * 构造函数私有化
      */
-    private R(){}
+    private Result(){}
 
     /**
      * 返回成功结果
      * @return
      */
-    public static R ok(){
-        R r = new R();
+    public static Result ok(){
+        Result r = new Result();
         r.setCode(ResponseEnum.SUCCESS.getCode());
         r.setMessage(ResponseEnum.SUCCESS.getMessage());
         return r;
@@ -32,8 +32,8 @@ public class R {
      * 返回失败结果
      * @return
      */
-    public static R error(){
-        R r = new R();
+    public static Result error(){
+        Result r = new Result();
         r.setCode(ResponseEnum.ERROR.getCode());
         r.setMessage(ResponseEnum.ERROR.getMessage());
         return r;
@@ -44,19 +44,19 @@ public class R {
      * @param responseEnum
      * @return
      */
-    public static R setResult(ResponseEnum responseEnum){
-        R r = new R();
+    public static Result setResult(ResponseEnum responseEnum){
+        Result r = new Result();
         r.setCode(responseEnum.getCode());
         r.setMessage(responseEnum.getMessage());
         return r;
     }
 
-    public R data(String key, Object value){
+    public Result data(String key, Object value){
         this.data.put(key, value);
         return this;
     }
 
-    public R data(Map<String, Object> map){
+    public Result data(Map<String, Object> map){
         this.setData(map);
         return this;
     }
@@ -66,7 +66,7 @@ public class R {
      * @param message
      * @return
      */
-    public R message(String message){
+    public Result message(String message){
         this.setMessage(message);
         return this;
     }
@@ -77,7 +77,7 @@ public class R {
      * @param code
      * @return
      */
-    public R code(Integer code){
+    public Result code(Integer code){
         this.setCode(code);
         return this;
     }
