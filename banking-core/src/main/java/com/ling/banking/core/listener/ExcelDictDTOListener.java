@@ -4,7 +4,6 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.ling.banking.core.mapper.DictMapper;
 import com.ling.banking.core.pojo.dto.ExcelDictDTO;
-import com.ling.banking.core.service.DictService;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
