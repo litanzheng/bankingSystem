@@ -108,6 +108,14 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         return excelDictDTOList;
     }
 
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
+        dictQueryWrapper.eq("dict_code", dictCode);
+        Dict dict = baseMapper.selectOne(dictQueryWrapper);
+        return  this.listByParentId(dict.getId());
+    }
+
     private boolean hasChildren(Long id) {
         QueryWrapper<Dict> dictQueryWrapper = new QueryWrapper<>();
         dictQueryWrapper.eq("parent_id", id);
